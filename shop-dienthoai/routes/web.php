@@ -13,6 +13,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController as CustomerOrderController;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\Auth\GoogleController;
+use App\Http\Controllers\ReviewController;
 
 
 /*
@@ -105,3 +106,5 @@ Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallba
 
 // Auth Route (Laravel Breeze hoặc Laravel UI tự sinh ra)
 require __DIR__.'/auth.php';
+
+Route::post('/products/{product}/reviews', [ReviewController::class, 'store'])->middleware('auth')->name('reviews.store');
