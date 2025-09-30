@@ -12,6 +12,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController as CustomerOrderController;
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\Auth\GoogleController;
 
 
 /*
@@ -97,6 +98,10 @@ Route::middleware('auth')->group(function () {
     // ⭐ Route trang Tài khoản
     Route::get('/account', [AccountController::class, 'index'])->name('account.index');
 });
+
+// Google Auth
+Route::get('auth/google', [GoogleController::class, 'redirectToGoogle'])->name('auth.google');
+Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
 
 // Auth Route (Laravel Breeze hoặc Laravel UI tự sinh ra)
 require __DIR__.'/auth.php';
