@@ -185,14 +185,16 @@
                 <a href="{{ route('admin.orders.index') }}" class="{{ request()->routeIs('admin.orders.*') ? 'active' : '' }}">
                     <i class="fas fa-shopping-cart"></i>
                     <span class="sidebar-text">Quản lý đơn hàng</span>
-                    <!-- @if($newOrdersCount > 0) Hiển  thị đơn hàng mới 
-                        <span class="badge bg-danger rounded-pill ms-auto sidebar-text">{{ $newOrdersCount }}</span>
-                    @endif -->
                 </a>
                 
                 <a href="{{ route('admin.users.index') }}" class="{{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
                     <i class="fas fa-users"></i>
                     <span class="sidebar-text">Quản lý tài khoản</span>
+                </a>
+                
+                <a href="{{ route('admin.reviews.index') }}" class="{{ request()->routeIs('admin.reviews.*') ? 'active' : '' }}">
+                    <i class="fas fa-star"></i>
+                    <span class="sidebar-text">Quản lý đánh giá</span>
                 </a>
             </div>
             
