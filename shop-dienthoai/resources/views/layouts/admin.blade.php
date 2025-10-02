@@ -208,7 +208,7 @@
         </div>
     </div>
 
-    <!-- Phần còn lại giữ nguyên -->
+    
     <nav class="navbar navbar-expand navbar-light" id="navbar">
         <div class="container-fluid">
             <button class="navbar-toggler d-md-none" type="button" id="mobileSidebarToggle">

@@ -39,9 +39,15 @@
                 </a>
             @endif
 
+            <button type="button" class="google-login" id="googleLoginBtn">
+                <div class="google-icon"></div>
+                <li><a title="Đăng nhập với tài khoản Google" href="{{ route('login-by-google') }}">Đăng nhập với tài khoản Google</a></li>
+            </button>
+
             <x-primary-button class="ms-3">
                 {{ __('Log in') }}
             </x-primary-button>
+            
         </div>
     </form>
 

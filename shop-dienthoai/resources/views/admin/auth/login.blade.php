@@ -142,7 +142,7 @@
 
             <button type="submit" class="btn-submit">Đăng nhập</button>
         </form>
-    </div>
+
 
     <script>
         function togglePassword() {
@@ -155,5 +155,6 @@
             eyeOpen.style.display = isHidden ? "none" : "inline";
             eyeClosed.style.display = isHidden ? "inline" : "none";
         }
+        
     </script>
 </x-guest-layout>

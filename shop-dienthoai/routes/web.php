@@ -11,9 +11,11 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController as CustomerOrderController;
+use App\Http\Controllers\LoginGoogleController;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\LoginController;
 
 
 /*
@@ -60,6 +62,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // Thống kê doanh thu ngày và năm
         Route::get('revenue/day', [App\Http\Controllers\Admin\RevenueController::class, 'day'])->name('revenue.day');
         Route::get('revenue/year', [App\Http\Controllers\Admin\RevenueController::class, 'year'])->name('revenue.year');
+
+        // Quản lý đánh giá sản phẩm
+        Route::resource('reviews', \App\Http\Controllers\Admin\ReviewController::class);
     });
 });
 
@@ -106,5 +111,4 @@ Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallba
 
 // Auth Route (Laravel Breeze hoặc Laravel UI tự sinh ra)
 require __DIR__.'/auth.php';
-
 Route::post('/products/{product}/reviews', [ReviewController::class, 'store'])->middleware('auth')->name('reviews.store');
