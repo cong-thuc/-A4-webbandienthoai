@@ -11,7 +11,9 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController as CustomerOrderController;
+use App\Http\Controllers\LoginGoogleController;
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\LoginController;
 
 
 /*
@@ -100,3 +102,7 @@ Route::middleware('auth')->group(function () {
 
 // Auth Route (Laravel Breeze hoặc Laravel UI tự sinh ra)
 require __DIR__.'/auth.php';
+
+//login google account
+ Route::get('auth/google', [LoginGoogleController::class, 'redirectToGoogle'])->name('login-by-google');
+ Route::get('auth/google/callback', [LoginController::class, 'handleGoogleCallback']);
