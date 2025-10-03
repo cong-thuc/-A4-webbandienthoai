@@ -59,8 +59,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // Xuất file Excel đơn hàng
         Route::get('orders/export/excel', [OrderExportController::class, 'export'])->name('orders.export');
 
-        // Thống kê doanh thu ngày và năm
-        Route::get('revenue/day', [App\Http\Controllers\Admin\RevenueController::class, 'day'])->name('revenue.day');
+        // Thống kê doanh thu ngày và nămRoute::get('revenue/day', [App\Http\Controllers\Admin\RevenueController::class, 'day'])->name('revenue.day');
         Route::get('revenue/year', [App\Http\Controllers\Admin\RevenueController::class, 'year'])->name('revenue.year');
 
         // Quản lý đánh giá sản phẩm

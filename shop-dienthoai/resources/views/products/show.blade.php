@@ -111,7 +111,7 @@
         <div>
             @foreach($product->reviews as $review)
                 <div class="border rounded-3 p-2 mb-2">
-                    <strong>{{ $review->user->name }}</strong>
+                    <strong>{{ $review->user->name }}</strong> 
                     <span>
                         @for($i=1; $i<=5; $i++)
                             <i class="fas fa-star {{ $i <= $review->rating ? 'text-warning' : 'text-secondary' }}"></i>
@@ -119,13 +119,6 @@
                     </span>
                     <p class="mb-0">{{ $review->comment }}</p>
                     <small class="text-muted">{{ $review->created_at->format('d/m/Y H:i') }}</small>
-                    
-                    {{-- Thêm đoạn này để hiển thị phản hồi admin --}}
-                    @if($review->admin_reply)
-                        <div class="alert alert-info mt-2">
-                            <strong>Phản hồi từ admin:</strong> {{ $review->admin_reply }}
-                        </div>
-                    @endif
                 </div>
             @endforeach
         </div>
