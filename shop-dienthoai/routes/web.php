@@ -13,6 +13,8 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController as CustomerOrderController;
 use App\Http\Controllers\LoginGoogleController;
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\Auth\GoogleController;
+use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\LoginController;
 
 
@@ -57,9 +59,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // Xuất file Excel đơn hàng
         Route::get('orders/export/excel', [OrderExportController::class, 'export'])->name('orders.export');
 
-        // Thống kê doanh thu ngày và năm
-        Route::get('revenue/day', [App\Http\Controllers\Admin\RevenueController::class, 'day'])->name('revenue.day');
+        // Thống kê doanh thu ngày và nămRoute::get('revenue/day', [App\Http\Controllers\Admin\RevenueController::class, 'day'])->name('revenue.day');
         Route::get('revenue/year', [App\Http\Controllers\Admin\RevenueController::class, 'year'])->name('revenue.year');
+
+        // Quản lý đánh giá sản phẩm
+        Route::resource('reviews', \App\Http\Controllers\Admin\ReviewController::class);
     });
 });
 
@@ -100,9 +104,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/account', [AccountController::class, 'index'])->name('account.index');
 });
 
+// Google Auth
+Route::get('auth/google', [GoogleController::class, 'redirectToGoogle'])->name('auth.google');
+Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
+
 // Auth Route (Laravel Breeze hoặc Laravel UI tự sinh ra)
 require __DIR__.'/auth.php';
-
-//login google account
- Route::get('auth/google', [LoginGoogleController::class, 'redirectToGoogle'])->name('login-by-google');
- Route::get('auth/google/callback', [LoginController::class, 'handleGoogleCallback']);
+Route::post('/products/{product}/reviews', [ReviewController::class, 'store'])->middleware('auth')->name('reviews.store');
