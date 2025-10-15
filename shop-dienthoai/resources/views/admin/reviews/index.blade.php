@@ -6,7 +6,7 @@
         <tr>
             <th>Sản phẩm</th>
             <th>Khách hàng</th>
-            <th>Số sao</th>
+            <th>Đánh giá</th>
             <th>Bình luận</th>
             <th>Phản hồi admin</th>
             <th>Thao tác</th>

@@ -71,9 +71,19 @@
                 </span>
                 <span class="ms-2">{{ $product->reviews->count() }} lượt đánh giá</span>
             </div>
-            <button class="btn btn-danger mt-2" data-bs-toggle="modal" data-bs-target="#reviewModal">
-                Viết đánh giá
-            </button>
+            
+            @auth
+                {{-- Phần này chỉ hiển thị khi người dùng đã đăng nhập --}}
+                <button type="button" class="btn btn-danger mt-2" data-bs-toggle="modal" data-bs-target="#reviewModal">
+                    <i class="fas fa-pencil-alt me-1"></i> Viết đánh giá
+                </button>
+            @else
+                {{-- Phần này chỉ hiển thị khi người dùng là khách --}}
+                <div class="alert alert-info mt-3">
+                    Vui lòng <a href="{{ route('login') }}" class="alert-link">đăng nhập</a> để viết đánh giá cho sản phẩm này.
+                </div>
+            @endguest
+
         </div>
 
         <!-- Modal Viết Đánh Giá -->
