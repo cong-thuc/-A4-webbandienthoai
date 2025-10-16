@@ -23,12 +23,18 @@
 
                         <div class="mb-4">
                             <label for="password" class="form-label fw-bold">Mật khẩu</label>
-                            <input id="password" class="form-control" type="password" name="password" required placeholder="Nhập mật khẩu">
+                            {{-- Bọc input và button trong một div riêng --}}
+                            <div class="position-relative">
+                                <input id="password" class="form-control pe-5" type="password" name="password" required placeholder="Nhập mật khẩu">
+                                
+                                <button type="button" id="togglePassword" class="btn border-0 position-absolute top-50 end-0 translate-middle-y">
+                                    <i class="fas fa-eye text-secondary"></i>
+                                </button>
+                            </div>
                             @error('password')
                                 <div class="text-danger mt-2">{{ $message }}</div>
                             @enderror
                         </div>
-
                         <div class="d-grid">
                             <button type="submit" class="btn btn-dark">
                                 Đăng nhập
@@ -40,4 +46,22 @@
         </div>
     </div>
 </div>
+@endsection
+
+@section('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('password');
+        const eyeIcon = togglePassword.querySelector('i');
+
+        togglePassword.addEventListener('click', function () {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+
+            eyeIcon.classList.toggle('fa-eye');
+            eyeIcon.classList.toggle('fa-eye-slash');
+        });
+    });
+</script>
 @endsection

@@ -65,6 +65,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         // Quản lý đánh giá sản phẩm
         Route::resource('reviews', \App\Http\Controllers\Admin\ReviewController::class);
+
+         // Thêm 2 route mới cho việc đổi mật khẩu
+        Route::get('/profile/change-password', [App\Http\Controllers\Admin\AdminProfileController::class, 'editPassword'])->name('profile.password.edit');
+        Route::post('/profile/change-password', [App\Http\Controllers\Admin\AdminProfileController::class, 'updatePassword'])->name('profile.password.update');
     });
 });
 

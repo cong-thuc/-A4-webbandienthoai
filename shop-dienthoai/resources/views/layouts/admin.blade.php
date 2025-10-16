@@ -197,16 +197,6 @@
                     <span class="sidebar-text">Quản lý đánh giá</span>
                 </a>
             </div>
-            
-            <div class="p-3">
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <button class="btn btn-outline-light btn-sm w-100">
-                        <i class="fas fa-sign-out-alt me-1"></i>
-                        <span class="sidebar-text">Đăng xuất</span>
-                    </button>
-                </form>
-            </div>
         </div>
     </div>
 
@@ -217,24 +207,47 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             
+            {{-- DÁN ĐOẠN CODE MỚI NÀY VÀO THAY THẾ --}}
+
             <div class="d-flex align-items-center ms-auto gap-3">
                 @if(Auth::check())
-                    <!-- Chuông thông báo đơn hàng mới -->
-                    <div class="position-relative me-2">
-                        <a href="{{ route('admin.orders.index') }}" class="text-blue" title="Thông báo đơn hàng mới">
+                    <div class="position-relative">
+                        <a href="{{ route('admin.orders.index') }}" class="text-secondary" title="Đơn hàng mới">
                             <i class="fas fa-bell fa-lg"></i>
                             @if($newOrdersCount > 0)
-                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem;">
                                     {{ $newOrdersCount }}
                                 </span>
                             @endif
                         </a>
                     </div>
-                    <div class="d-flex align-items-center">
-                        <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px;">
-                            {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
-                        </div>
-                        <span>{{ Auth::user()->name }}</span>
+
+                    <div class="dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px; font-weight: 500;">
+                                {{ strtoupper(substr(Auth::user()->name, 0, 1)) }} 
+                            </div>
+                            <span>{{ Auth::user()->name }}</span>
+                        </a>
+
+                        <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="userDropdown">
+                            <li>
+                                <a class="dropdown-item" href="{{ route('admin.profile.password.edit') }}">
+                                    <i class="fas fa-key fa-sm fa-fw me-2 text-gray-400"></i>
+                                    Đổi mật khẩu
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                    <i class="fas fa-sign-out-alt fa-sm fa-fw me-2 text-gray-400"></i>
+                                    Đăng xuất
+                                </a>
+                                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                    @csrf
+                                </form>
+                            </li>
+                        </ul>
                     </div>
                 @endif
             </div>
