@@ -7,6 +7,7 @@
     </div>
 </div>
 
+{{-- Hiển thị thông báo lỗi --}}
 @if(session('error'))
     <div class="alert alert-danger text-center">{{ session('error') }}</div>
 @endif
@@ -34,9 +35,14 @@
                 <tr class="text-center">
                     <td>
                         @if($item['product']->image)
-                            <img src="{{ asset('storage/' . $item['product']->image) }}" class="rounded-3 img-thumbnail" style="width: 70px; height: 70px; object-fit: cover;" alt="{{ $item['product']->name }}">
+                            <img src="{{ asset('storage/' . $item['product']->image) }}" 
+                                 class="rounded-3 img-thumbnail" 
+                                 style="width: 70px; height: 70px; object-fit: cover;" 
+                                 alt="{{ $item['product']->name }}">
                         @else
-                            <img src="https://via.placeholder.com/70x70?text=No+Image" class="rounded-3 img-thumbnail" alt="No Image">
+                            <img src="https://via.placeholder.com/70x70?text=No+Image" 
+                                 class="rounded-3 img-thumbnail" 
+                                 alt="No Image">
                         @endif
                     </td>
                     <td class="fw-bold">{{ $item['product']->name }}</td>
@@ -44,13 +50,16 @@
                     <td>
                         <form action="{{ route('cart.update', $item['product']->id) }}" method="POST" class="d-flex align-items-center justify-content-center gap-2">
                             @csrf
-                            <input type="number" name="quantity" min="1" value="{{ $item['quantity'] }}" class="form-control form-control-sm text-center quantity-input" style="width: 70px;">
-                            {{-- Đã bỏ nút cập nhật --}}
+                            <input type="number" name="quantity" min="1" value="{{ $item['quantity'] }}" 
+                                   class="form-control form-control-sm text-center quantity-input" 
+                                   style="width: 70px;">
                         </form>
                     </td>
                     <td>{{ number_format($subtotal, 0, ',', '.') }}₫</td>
                     <td>
-                        <form action="{{ route('cart.remove', $item['product']->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này?')">
+                        <form action="{{ route('cart.remove', $item['product']->id) }}" method="POST" 
+                              style="display:inline;" 
+                              onsubmit="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này?')">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-outline-danger btn-sm">
@@ -64,15 +73,24 @@
     </table>
 </div>
 
-<div class="d-flex justify-content-between align-items-center mt-4">
-    <h4 class="fw-bold">
+{{-- Tổng cộng & Nút thanh toán --}}
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-center mt-4 gap-3">
+    <h4 class="fw-bold mb-0">
         Tổng cộng: <span class="text-danger">{{ number_format($total, 0, ',', '.') }}₫</span>
     </h4>
-    <a href="{{ route('orders.create') }}" class="btn btn-success btn-lg rounded-pill">
-        <i class="fas fa-money-check-alt"></i> Tiến hành thanh toán
-    </a>
+
+    <div class="d-flex flex-column flex-md-row gap-3">
+        {{-- Nút thanh toán COD --}}
+        <a href="{{ route('orders.create') }}" class="btn btn-success btn-lg rounded-pill px-4">
+            <i class="fas fa-money-check-alt"></i> Tiến hành thanh toán 
+        </a>
+
+        
+    </div>
 </div>
+
 @else
+{{-- Khi giỏ hàng trống --}}
 <div class="text-center mt-5">
     <h4>Giỏ hàng của bạn đang trống</h4>
     <a href="{{ route('home') }}" class="btn btn-primary mt-3">
@@ -82,6 +100,7 @@
 @endif
 @endsection
 
+{{-- Script cập nhật số lượng AJAX --}}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.quantity-input').forEach(function(input) {
@@ -101,9 +120,9 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(res => res.json())
             .then(res => {
                 if (res.success) {
-                    // cập nhật lại subtotal trong hàng
+                    // Cập nhật lại subtotal trong hàng
                     this.closest('tr').querySelector('td:nth-child(5)').innerText = res.subtotal;
-                    // cập nhật lại tổng cộng
+                    // Cập nhật lại tổng cộng
                     document.querySelector('h4 .text-danger').innerText = res.total;
                 } else {
                     alert(res.message);

@@ -16,6 +16,7 @@ use App\Http\Controllers\AccountController;
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\PaymentController;
 
 
 /*
@@ -116,3 +117,9 @@ Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallba
 // Auth Route (Laravel Breeze hoặc Laravel UI tự sinh ra)
 require __DIR__.'/auth.php';
 Route::post('/products/{product}/reviews', [ReviewController::class, 'store'])->middleware('auth')->name('reviews.store');
+
+
+ // ⭐ Thanh toán MoMo (thêm mới & gọn gàng)
+    Route::post('/momo_payment', [CustomerOrderController::class, 'momoPayment'])->name('momo.payment');
+    Route::get('/momo_callback', [CustomerOrderController::class, 'momoCallback'])->name('momo.callback');
+Route::post('/payment/momo/{order}', [PaymentController::class, 'createMomoPayment'])->name('payment.momo');

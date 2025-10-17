@@ -14,7 +14,21 @@
         <p><strong>Số điện thoại:</strong> {{ $order->phone }}</p>
         <p><strong>Địa chỉ:</strong> {{ $order->address }}</p>
         <p><strong>Trạng thái:</strong> {{ $order->status }}</p>
-        <p><strong>Ngày đặt:</strong> {{ $order->created_at->format('d/m/Y H:i') }}</p>
+        {{-- ✅ Dòng mới thêm ở đây --}}
+        <p>
+        <strong>Phương thức thanh toán:</strong>
+        @php
+            $method = strtolower($order->payment_method);
+        @endphp
+
+        @if ($method === 'momo')
+            Thanh toán qua MoMo
+        @elseif ($method === 'cod')
+            Thanh toán khi nhận hàng (COD)
+        @else
+            {{ $order->payment_method ?? 'Không xác định' }}
+        @endif
+    </p>
 
         <hr>
 
@@ -33,7 +47,7 @@
                 <tbody>
                     @foreach ($order->orderItems as $item)
                         <tr>
-                            <td>{{ $item->product_name ??'[Đã xóa]' }}</td>
+                            <td>{{ $item->product_name ?? '[Đã xóa]' }}</td>
                             <td>{{ number_format($item->price, 0, ',', '.') }}₫</td>
                             <td>{{ $item->quantity }}</td>
                             <td>{{ number_format($item->price * $item->quantity, 0, ',', '.') }}₫</td>
