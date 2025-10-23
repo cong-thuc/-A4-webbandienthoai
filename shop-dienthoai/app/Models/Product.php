@@ -31,4 +31,9 @@ class Product extends Model
     {
         return $this->hasMany(Review::class);
     }
+    public function visibleReviews()
+    {
+        // Lấy các đánh giá được phép hiển thị, sắp xếp mới nhất lên đầu
+        return $this->hasMany(Review::class)->where('is_visible', true)->latest();
+    }
 }

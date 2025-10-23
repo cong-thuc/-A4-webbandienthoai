@@ -57,28 +57,32 @@
 
     <!-- Đánh giá & bình luận -->
     <div class="mt-4">
-        <!-- Hiển thị điểm trung bình và nút viết đánh giá -->
         <div class="mb-3">
             <h5>Đánh giá sản phẩm</h5>
+            {{-- Tính điểm trung bình và số lượt đánh giá dựa trên visibleReviews --}}
+            @php
+                $visibleReviews = $product->visibleReviews; // Gọi hàm 1 lần cho hiệu quả
+                $averageRating = $visibleReviews->avg('rating');
+                $reviewCount = $visibleReviews->count();
+            @endphp
             <div>
                 <span style="font-size:2rem; font-weight:bold;">
-                    {{ number_format($product->reviews->avg('rating'), 1) }}/5
+                    {{ number_format($averageRating, 1) }}/5  {{-- <<< ĐÃ THAY ĐỔI --}}
                 </span>
                 <span>
                     @for($i=1; $i<=5; $i++)
-                        <i class="fas fa-star {{ $i <= round($product->reviews->avg('rating')) ? 'text-warning' : 'text-secondary' }}"></i>
+                        <i class="fas fa-star {{ $i <= round($averageRating) ? 'text-warning' : 'text-secondary' }}"></i> {{-- <<< ĐÃ THAY ĐỔI --}}
                     @endfor
                 </span>
-                <span class="ms-2">{{ $product->reviews->count() }} lượt đánh giá</span>
+                <span class="ms-2">{{ $reviewCount }} lượt đánh giá</span> {{-- <<< ĐÃ THAY ĐỔI --}}
             </div>
             
+            {{-- Phần nút Viết đánh giá (giữ nguyên @auth/@guest) --}}
             @auth
-                {{-- Phần này chỉ hiển thị khi người dùng đã đăng nhập --}}
                 <button type="button" class="btn btn-danger mt-2" data-bs-toggle="modal" data-bs-target="#reviewModal">
                     <i class="fas fa-pencil-alt me-1"></i> Viết đánh giá
                 </button>
             @else
-                {{-- Phần này chỉ hiển thị khi người dùng là khách --}}
                 <div class="alert alert-info mt-3">
                     Vui lòng <a href="{{ route('login') }}" class="alert-link">đăng nhập</a> để viết đánh giá cho sản phẩm này.
                 </div>
@@ -86,42 +90,42 @@
 
         </div>
 
-        <!-- Modal Viết Đánh Giá -->
         <div class="modal fade" id="reviewModal" tabindex="-1" aria-labelledby="reviewModalLabel" aria-hidden="true">
-          <div class="modal-dialog">
-            <form action="{{ route('reviews.store', $product->id) }}" method="POST" class="modal-content">
-              @csrf
-              <div class="modal-header">
-                <h5 class="modal-title" id="reviewModalLabel">Đánh giá & nhận xét</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
-              </div>
-              <div class="modal-body">
-                <div class="mb-3 text-center">
-                  <label class="form-label fw-bold">Đánh giá chung:</label>
-                  <div id="starRating">
-                    @for($i=1; $i<=5; $i++)
-                      <i class="fas fa-star star-select text-secondary" data-value="{{ $i }}" style="font-size:2rem; cursor:pointer;"></i>
-                    @endfor
-                  </div>
-                  <input type="hidden" name="rating" id="ratingInput" required>
-                </div>
-                <div class="mb-3">
-                  <label for="comment" class="form-label">Nhận xét của bạn:</label>
-                  <textarea name="comment" id="comment" class="form-control" rows="3" required></textarea>
-                </div>
-              </div>
-              <div class="modal-footer">
-                <button type="submit" class="btn btn-danger w-100">Gửi đánh giá</button>
-              </div>
-            </form>
-          </div>
+            {{-- ... code modal ... --}}
+            <div class="modal-dialog">
+                <form action="{{ route('reviews.store', $product->id) }}" method="POST" class="modal-content">
+                    @csrf
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="reviewModalLabel">Đánh giá & nhận xét</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3 text-center">
+                            <label class="form-label fw-bold">Đánh giá chung:</label>
+                            <div id="starRating">
+                                @for($i=1; $i<=5; $i++)
+                                    <i class="fas fa-star star-select text-secondary" data-value="{{ $i }}" style="font-size:2rem; cursor:pointer;"></i>
+                                @endfor
+                            </div>
+                            <input type="hidden" name="rating" id="ratingInput" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="comment" class="form-label">Nhận xét của bạn:</label>
+                            <textarea name="comment" id="comment" class="form-control" rows="3" required></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-danger w-100">Gửi đánh giá</button>
+                    </div>
+                </form>
+            </div>
         </div>
 
-        <!-- Hiển thị các đánh giá -->
         <div>
-            @foreach($product->reviews as $review)
+            {{-- Sử dụng visibleReviews thay vì reviews --}}
+            @forelse($visibleReviews as $review) {{-- <<< ĐÃ THAY ĐỔI --}}
                 <div class="border rounded-3 p-2 mb-2">
-                    <strong>{{ $review->user->name }}</strong>
+                    <strong>{{ $review->user->name ?? 'Người dùng ẩn danh' }}</strong>
                     <span>
                         @for($i=1; $i<=5; $i++)
                             <i class="fas fa-star {{ $i <= $review->rating ? 'text-warning' : 'text-secondary' }}"></i>
@@ -130,14 +134,15 @@
                     <p class="mb-0">{{ $review->comment }}</p>
                     <small class="text-muted">{{ $review->created_at->format('d/m/Y H:i') }}</small>
                     
-                    {{-- Thêm đoạn này để hiển thị phản hồi admin --}}
                     @if($review->admin_reply)
                         <div class="alert alert-info mt-2">
                             <strong>Phản hồi từ admin:</strong> {{ $review->admin_reply }}
                         </div>
                     @endif
                 </div>
-            @endforeach
+            @empty
+                <p class="text-muted">Chưa có đánh giá nào cho sản phẩm này.</p>
+            @endforelse
         </div>
     </div>
 </div>

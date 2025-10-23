@@ -69,4 +69,14 @@ class ReviewController extends Controller
     {
         //
     }
+
+    public function toggleVisibility(Review $review)
+    {
+        // Đảo ngược trạng thái hiện tại (true thành false và ngược lại)
+        $review->is_visible = !$review->is_visible;
+        $review->save();
+
+        $message = $review->is_visible ? 'Đánh giá đã được cho phép hiển thị.' : 'Đánh giá đã được ẩn đi.';
+        return back()->with('success', $message);
+    }
 }
