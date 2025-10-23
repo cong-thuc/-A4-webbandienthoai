@@ -317,11 +317,12 @@
 
         /* Sửa lỗi hiển thị modal đánh giá */
         .modal-backdrop {
+            position: fixed;
             z-index: 1040 !important;
         }
 
         .modal {
-            z-index: 1051 !important;
+            z-index: 1060 !important;
         }
 
         .modal-content {
@@ -331,5 +332,5 @@
 
             /* Giữ lại các thuộc tính đúng của bạn */
             position: relative;
-            z-index: 1052 !important;
+            /* z-index: 1052 !important; */
         }

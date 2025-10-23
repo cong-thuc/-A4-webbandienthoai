@@ -130,7 +130,7 @@
 </nav>
 
 <!-- Main content -->
-<main class="animate__animated animate__fadeIn">
+<main class="">
     <div class="container">
         @yield('content')
     </div>
