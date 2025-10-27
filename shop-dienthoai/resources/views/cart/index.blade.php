@@ -64,6 +64,15 @@
     </table>
 </div>
 
+{{-- Tổng cộng & Nút thanh toán --}}
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-center mt-4 gap-3">
+    <h4 class="fw-bold mb-0">
+        Tổng cộng: <span class="text-danger">{{ number_format($total, 0, ',', '.') }}₫</span>
+    </h4>
+
+    <div class="d-flex flex-column flex-md-row gap-3">
+
+
 <div class="d-flex justify-content-between align-items-center mt-4">
     <h4 class="fw-bold">
         Tổng cộng: <span class="text-danger">{{ number_format($total, 0, ',', '.') }}₫</span>

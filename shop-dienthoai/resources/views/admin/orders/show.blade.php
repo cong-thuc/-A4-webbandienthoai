@@ -16,7 +16,22 @@
         <p><strong>Trạng thái:</strong> {{ $order->status }}</p>
         <p><strong>Ngày đặt:</strong> {{ $order->created_at->format('d/m/Y H:i') }}</p>
 
-        <hr>
+                <p>
+        <strong>Phương thức thanh toán:</strong>
+        @php
+            $method = strtolower($order->payment_method);
+        @endphp
+
+        @if ($method === 'momo')
+            Thanh toán qua MoMo
+        @elseif ($method === 'cod')
+            Thanh toán khi nhận hàng (COD)
+        @else
+            {{ $order->payment_method ?? 'Không xác định' }}
+        @endif
+    </p>
+
+    <hr>
 
         <h5>Danh sách sản phẩm:</h5>
 
