@@ -41,7 +41,6 @@
                             <th class="py-3">SĐT</th>
                             <th class="py-3">Địa chỉ</th>
                             <th class="py-3">Trạng thái</th>
-                            <th class="py-3">PT Thanh toán</th> {{-- <-- THÊM CỘT MỚI --}}
                             <th class="py-3">Ngày đặt</th>
                             <th width="15%" class="py-3 text-center">Hành động</th>
                         </tr>
@@ -92,17 +91,6 @@
                                     </span>
                                 </td>
 
-                                {{-- THÊM DỮ LIỆU CỘT MỚI --}}
-                                <td>
-                                    @if($order->payment_method == 'cod')
-                                        <span class="badge bg-secondary">COD</span>
-                                    @elseif($order->payment_method == 'momo')
-                                        <span class="badge" style="background-color: #A60067; color: white;">MoMo</span>
-                                    @else
-                                        <span class="badge bg-light text-dark">{{ $order->payment_method ?? 'N/A' }}</span>
-                                    @endif
-                                </td>
-
                                 <td>{{ $order->created_at->format('d/m/Y H:i') }}</td>
                                 <td>
                                     <div class="d-flex justify-content-center gap-2">
@@ -121,7 +109,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="8" class="text-center py-4"> {{-- <-- CẬP NHẬT COLSPAN="8" --}}
+                                <td colspan="7" class="text-center py-4"> {{-- <-- CẬP NHẬT COLSPAN="8" --}}
                                     <div class="d-flex flex-column align-items-center">
                                         <i class="fas fa-shopping-cart fa-2x text-muted mb-2"></i>
                                         <span class="text-muted">Không có đơn hàng nào</span>
