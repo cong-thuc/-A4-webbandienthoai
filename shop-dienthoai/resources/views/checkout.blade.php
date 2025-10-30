@@ -109,21 +109,21 @@
     document.addEventListener('DOMContentLoaded', function () {
         const codBtn = document.getElementById('checkout-cod');
         const momoBtn = document.getElementById('checkout-momo');
-        const form = document.getElementById('checkout-form');
         const paymentInput = document.getElementById('payment_method');
 
-        codBtn.addEventListener('click', function (e) {
-            e.preventDefault(); // chặn gửi mặc định
+        // Khi nhấn nút COD
+        codBtn.addEventListener('click', function () {
             paymentInput.value = 'COD';
-            form.action = codBtn.getAttribute('formaction');
-            form.submit(); // gửi thủ công sau khi gán giá trị
+            // KHÔNG dùng preventDefault()
+            // Cứ để trình duyệt tự chạy validation và submit
         });
 
-        momoBtn.addEventListener('click', function (e) {
-            e.preventDefault();
+        // Khi nhấn nút MoMo
+        momoBtn.addEventListener('click', function () {
             paymentInput.value = 'MoMo';
-            form.action = momoBtn.getAttribute('formaction');
-            form.submit();
+            // KHÔNG dùng preventDefault()
+            // Trình duyệt sẽ tự validation các trường required
+            // Nếu OK, nó sẽ submit đến formaction của nút MoMo
         });
     });
 </script>

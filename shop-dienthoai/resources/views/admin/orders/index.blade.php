@@ -41,6 +41,7 @@
                             <th class="py-3">SĐT</th>
                             <th class="py-3">Địa chỉ</th>
                             <th class="py-3">Trạng thái</th>
+                            <th class="py-3">PT Thanh toán</th> {{-- <-- THÊM CỘT MỚI --}}
                             <th class="py-3">Ngày đặt</th>
                             <th width="15%" class="py-3 text-center">Hành động</th>
                         </tr>
@@ -55,19 +56,53 @@
                                     {{ $order->address }}
                                 </td>
                                 <td>
-                                    <span class="badge rounded-pill py-2 px-3 bg-{{ 
-                                        $order->status == 'Chờ xác nhận' ? 'warning' : 
-                                        ($order->status == 'Đang giao' ? 'info' : 
-                                        ($order->status == 'Đã giao' ? 'success' : 'danger')) 
-                                    }}">
-                                        <i class="fas {{ 
-                                            $order->status == 'Chờ xác nhận' ? 'fa-clock' : 
-                                            ($order->status == 'Đang giao' ? 'fa-truck' : 
-                                            ($order->status == 'Đã giao' ? 'fa-check-circle' : 'fa-times-circle')) 
-                                        }} me-1"></i>
+                                    {{-- CẬP NHẬT LOGIC HIỂN THỊ TRẠNG THÁI --}}
+                                    @php
+                                        $statusClass = 'bg-secondary'; // Mặc định
+                                        $statusIcon = 'fa-question-circle';
+                                        
+                                        switch ($order->status) {
+                                            case 'Chờ xác nhận':
+                                                $statusClass = 'bg-warning text-dark';
+                                                $statusIcon = 'fa-clock';
+                                                break;
+                                            case 'Chờ thanh toán': // Cho MoMo
+                                                $statusClass = 'bg-primary';
+                                                $statusIcon = 'fa-credit-card';
+                                                break;
+                                            case 'Đang giao':
+                                                $statusClass = 'bg-info text-dark';
+                                                $statusIcon = 'fa-truck';
+                                                break;
+                                            case 'Đã giao':
+                                            case 'Đã thanh toán': // Cho MoMo thành công
+                                                $statusClass = 'bg-success';
+                                                $statusIcon = 'fa-check-circle';
+                                                break;
+                                            case 'Đã hủy':
+                                            case 'Thanh toán thất bại': // Cho MoMo thất bại
+                                                $statusClass = 'bg-danger';
+                                                $statusIcon = 'fa-times-circle';
+                                                break;
+                                        }
+                                    @endphp
+                                    <span class="badge rounded-pill py-2 px-3 {{ $statusClass }}">
+                                        <i class="fas {{ $statusIcon }} me-1"></i>
                                         {{ $order->status }}
                                     </span>
                                 </td>
+
+                                {{-- THÊM DỮ LIỆU CỘT MỚI --}}
+                                <td>
+                                    @if($order->payment_method == 'cod')
+                                        <span class="badge bg-secondary">COD</span>
+                                    @elseif($order->payment_method == 'momo')
+                                        <span class="badge" style="background-color: #A60067; color: white;">MoMo</span>
+                                    @else
+                                        <span class="badge bg-light text-dark">{{ $order->payment_method ?? 'N/A' }}</span>
+                                    @endif
+                                </td>
+
                                 <td>{{ $order->created_at->format('d/m/Y H:i') }}</td>
                                 <td>
                                     <div class="d-flex justify-content-center gap-2">
@@ -86,7 +121,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="text-center py-4">
+                                <td colspan="8" class="text-center py-4"> {{-- <-- CẬP NHẬT COLSPAN="8" --}}
                                     <div class="d-flex flex-column align-items-center">
                                         <i class="fas fa-shopping-cart fa-2x text-muted mb-2"></i>
                                         <span class="text-muted">Không có đơn hàng nào</span>

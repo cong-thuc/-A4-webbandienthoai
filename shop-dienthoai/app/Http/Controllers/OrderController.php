@@ -88,9 +88,18 @@ class OrderController extends Controller
         return redirect('/orders');
     }
 
-    // ✅ Thanh toán MoMo (tạo đơn + redirect sang cổng MoMo)
+// ✅ Thanh toán MoMo (tạo đơn + redirect sang cổng MoMo)
     public function momoPayment(Request $request)
     {
+        // ⭐ BƯỚC 1: THÊM KHỐI VALIDATE NÀY VÀO ĐẦU HÀM
+        $request->validate([
+            'customer_name' => 'required|string|max:255',
+            'customer_phone' => 'required|string|max:20',
+            'customer_address' => 'required|string|max:255',
+            'payment_method' => 'required|string', // Đảm bảo phương thức thanh toán được gửi
+        ]);
+        // ⭐ KẾT THÚC THÊM VALIDATE
+
         $cart = session()->get('cart', []);
         if (empty($cart)) {
             return redirect('/')->with('error', 'Giỏ hàng của bạn đang trống.');
@@ -103,13 +112,14 @@ class OrderController extends Controller
         }
 
         // ✅ Tạo đơn hàng trước (pending)
+        // ⭐ BƯỚC 2: SỬA LẠI HÀM CREATE (BỎ CÁC GIÁ TRỊ DỰ PHÒNG ??)
         $order = Order::create([
             'user_id' => Auth::id(),
-            'name' => $request->customer_name ?? 'Khách hàng MoMo',
-            'phone' => $request->customer_phone ?? '',
-            'address' => $request->customer_address ?? '',
+            'name' => $request->customer_name,     // Bỏ '?? Khách hàng MoMo'
+            'phone' => $request->customer_phone,   // Bỏ '?? ''
+            'address' => $request->customer_address, // Bỏ '?? ''
             'status' => 'Chờ thanh toán',
-            'payment_method' => 'MoMo',
+            'payment_method' => $request->payment_method, // Lấy từ form
             'total_price' => $total,
         ]);
 
@@ -174,7 +184,6 @@ class OrderController extends Controller
 
         return back()->with('error', 'Không thể kết nối với MoMo. ' . json_encode($result));
     }
-
     // ✅ Callback từ MoMo (sau khi thanh toán)
     public function momoCallback(Request $request)
     {
