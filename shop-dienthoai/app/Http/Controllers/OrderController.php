@@ -136,8 +136,8 @@ class OrderController extends Controller
         // ✅ Gọi API MoMo
         $endpoint = "https://test-payment.momo.vn/v2/gateway/api/create";
         $partnerCode = "MOMO";
-        $accessKey = "F8BBA842ECF85";
-        $secretKey = "K951B6PE1waDMi640xX08PD3vg6EkVlz";
+        $accessKey = env('MOMO_ACCESS_KEY');
+        $secretKey = env('MOMO_SECRET_KEY');
         $orderInfo = "Thanh toán đơn hàng #" . $order->id;
         $amount = $total;
         $orderId = 'ORDER_' . $order->id . '_' . time();
