@@ -18,6 +18,8 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\PaymentController;
 
+use App\Http\Controllers\ChatbotController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -125,3 +127,8 @@ Route::post('/products/{product}/reviews', [ReviewController::class, 'store'])->
 Route::post('/momo_payment', [CustomerOrderController::class, 'momoPayment'])->name('momo.payment');
 Route::get('/momo_callback', [CustomerOrderController::class, 'momoCallback'])->name('momo.callback');
 Route::post('/payment/momo/{order}', [PaymentController::class, 'createMomoPayment'])->name('payment.momo');
+
+
+
+// ⭐ Route cho Chatbot AI
+Route::post('/chatbot/ask', [ChatbotController::class, 'ask']);

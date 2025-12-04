@@ -12,6 +12,8 @@
     <link rel="preconnect" href="https://cdn.jsdelivr.net">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    
     
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -305,3 +307,151 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 @yield('scripts')
 </body>
 </html>
+
+<style>
+    /* CSS cơ bản cho Chat Widget (Giữ nguyên) */
+    .chatbot-icon {
+        position: fixed; bottom: 20px; right: 20px; z-index: 1000; cursor: pointer;
+        background-color: #007bff; color: white; border-radius: 50%; width: 60px; height: 60px;
+        display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    .chat-container {
+        position: fixed; bottom: 90px; right: 20px; width: 350px; height: 450px;
+        background-color: white; border: 1px solid #ccc; border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3); display: none; flex-direction: column; z-index: 999;
+    }
+    .chat-header {
+        background-color: #007bff; color: white; padding: 10px; border-top-left-radius: 9px;
+        border-top-right-radius: 9px; font-weight: bold; display: flex; justify-content: space-between;
+        align-items: center;
+    }
+    .chat-body {
+        flex-grow: 1; padding: 15px; overflow-y: auto;
+    }
+    .chat-input {
+        padding: 10px; border-top: 1px solid #eee; display: flex;
+    }
+    .chat-input input {
+        flex-grow: 1; padding: 8px; border: 1px solid #ccc; border-radius: 4px; margin-right: 5px;
+    }
+    .message-user { text-align: right; margin-bottom: 8px; }
+    .message-ai { text-align: left; margin-bottom: 8px; }
+    .message-user span { background-color: #dcf8c6; padding: 8px; border-radius: 10px; display: inline-block; }
+    .message-ai span { background-color: #f1f0f0; padding: 8px; border-radius: 10px; display: inline-block; }
+    /* CSS Mới cho Quick Replies */
+    .quick-replies {
+        padding: 10px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+        border-top: 1px solid #eee;
+    }
+    .quick-replies button {
+        padding: 5px 10px;
+        border: 1px solid #007bff;
+        background-color: white;
+        color: #007bff;
+        border-radius: 20px;
+        cursor: pointer;
+        font-size: 12px;
+        transition: background-color 0.2s;
+    }
+    .quick-replies button:hover {
+        background-color: #e6f0ff;
+    }
+</style>
+
+<div class="chatbot-icon" id="toggleChat">
+    <i class="fas fa-comment-dots fa-2x"></i>
+</div>
+
+<div class="chat-container" id="chatWidget">
+    <div class="chat-header">
+        <span>🤖 Trợ lý AI Phone Shop</span>
+        <span style="cursor: pointer;" onclick="document.getElementById('chatWidget').style.display = 'none';">X</span>
+    </div>
+    <div class="chat-body" id="chatBody">
+        <div class="message-ai">
+            <span>Xin chào Anh/Chị! Em là trợ lý AI của Phone Shop. Em rất sẵn lòng hỗ trợ Anh/Chị 😊</span>
+        </div>
+    </div>
+    
+    <div class="quick-replies">
+        <button onclick="sendQuickReply('iPhone mới nhất là gì?')">📱 iPhone Mới</button>
+        <button onclick="sendQuickReply('Điện thoại Android nào tốt?')">🤖 Android Giá Tốt</button>
+        <button onclick="sendQuickReply('Chính sách bảo hành như thế nào?')">🛡️ Bảo hành</button>
+        <button onclick="sendQuickReply('Phương thức thanh toán?')">💳 Thanh toán</button>
+    </div>
+    <div class="chat-input">
+        <input type="text" id="chatInput" placeholder="Nhập tin nhắn..." onkeypress="if(event.keyCode==13) sendMessage()">
+        <button class="btn btn-primary" onclick="sendMessage()">Gửi</button>
+    </div>
+</div>
+
+<script>
+    // Hàm hiển thị/ẩn chat widget (Giữ nguyên)
+    document.getElementById('toggleChat').onclick = function() {
+        var chatWidget = document.getElementById('chatWidget');
+        chatWidget.style.display = chatWidget.style.display === 'flex' ? 'none' : 'flex';
+    };
+
+    // Hàm MỚI: Dùng để gửi câu hỏi nhanh
+    function sendQuickReply(message) {
+        // Đặt nội dung câu hỏi vào ô input và gọi hàm sendMessage
+        document.getElementById('chatInput').value = message;
+        sendMessage();
+    }
+
+    // Hàm gửi tin nhắn (Đã sửa lỗi trước đó)
+    function sendMessage() {
+        const input = document.getElementById('chatInput');
+        const message = input.value.trim();
+        const chatBody = document.getElementById('chatBody');
+
+        if (message === '') return;
+
+        // 1. Hiển thị tin nhắn của User
+        chatBody.innerHTML += `<div class="message-user"><span>${message}</span></div>`;
+        input.value = '';
+        chatBody.scrollTop = chatBody.scrollHeight;
+
+        // Lấy CSRF Token
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+        // 2. Gọi API Laravel
+        fetch('/chatbot/ask', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken 
+            },
+            body: JSON.stringify({ message: message })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            // 3. Hiển thị phản hồi của AI
+            const aiResponse = data.answer || "Xin lỗi, tôi không hiểu câu hỏi này.";
+            chatBody.innerHTML += `<div class="message-ai"><span>${aiResponse}</span></div>`;
+            chatBody.scrollTop = chatBody.scrollHeight;
+        })
+        .catch(error => {
+            console.error('Lỗi khi gọi API Chatbot:', error);
+            // Thông báo lỗi thân thiện hơn
+            let errorMsg = "Hệ thống đang gặp sự cố. Vui lòng kiểm tra Laravel Log hoặc cấu hình API AI.";
+            if (error.message.includes('404')) {
+                 errorMsg = "Lỗi: Không tìm thấy đường dẫn (404). Vui lòng kiểm tra lại Route trong web.php.";
+            } else if (error.message.includes('500')) {
+                 errorMsg = "Lỗi: Server (500). Vui lòng kiểm tra Laravel Log.";
+            }
+            
+            chatBody.innerHTML += `<div class="message-ai"><span>${errorMsg}</span></div>`;
+            chatBody.scrollTop = chatBody.scrollHeight;
+        });
+    }
+</script>
+
