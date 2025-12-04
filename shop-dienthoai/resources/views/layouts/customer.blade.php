@@ -114,6 +114,24 @@
                             </li>
                         </ul>
                     </li>
+                    <li class="nav-item dropdown me-2">
+                        <a class="nav-link dropdown-toggle position-relative" href="#" id="notificationDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-bell fa-lg"></i>
+                            {{-- Badge for notification count --}}
+                            <span id="notification-badge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="display: none; font-size: 0.6rem;">
+                                0
+                            </span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="notificationDropdown" style="width: 300px; max-height: 400px; overflow-y: auto;">
+                            <li><h6 class="dropdown-header">Thông báo mới</h6></li>
+                            <li><hr class="dropdown-divider"></li>
+
+                            {{-- Container for notification list --}}
+                            <div id="notification-list">
+                                <li class="text-center text-muted small py-2">Không có thông báo mới</li>
+                            </div>
+                        </ul>
+                    </li>
                 @else
                     <li class="nav-item">
                         <a class="nav-link {{ request()->is('login') ? 'active' : '' }}" href="/login">
@@ -303,6 +321,88 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 </script>
+
+@auth
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        let unreadCount = 0;
+
+        function checkNewNotifications() {
+            fetch('/notifications/check')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.length > 0) {
+                        // 1. Cập nhật số lượng trên chuông
+                        unreadCount += data.length;
+                        updateNotificationBadge(unreadCount);
+
+                        // 2. Xử lý từng thông báo
+                        data.forEach(notification => {
+                            
+                            // ✅ ĐÃ XÓA: window.showToast (Không hiện bảng nổi nữa)
+
+                            // ✅ GIỮ LẠI: Phát âm thanh
+                            playNotificationSound();
+
+                            // ✅ GIỮ LẠI: Thêm vào danh sách dropdown của chuông
+                            addNotificationToDropdown(notification);
+                        });
+                    }
+                })
+                .catch(error => console.log('Lỗi:', error));
+        }
+
+        // Hàm cập nhật số đỏ trên chuông
+        function updateNotificationBadge(count) {
+            const badge = document.getElementById('notification-badge');
+            if (count > 0) {
+                badge.innerText = count;
+                badge.style.display = 'block'; 
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+
+        // Hàm thêm thông báo vào danh sách xổ xuống
+        function addNotificationToDropdown(notification) {
+            const list = document.getElementById('notification-list');
+            
+            // Xóa dòng "Không có thông báo" nếu có
+            if (list.querySelector('.text-muted')) {
+                list.innerHTML = ''; 
+            }
+
+            // Tạo HTML cho thông báo mới
+            const itemHtml = `
+                <li>
+                    <a class="dropdown-item d-flex align-items-start py-2" href="#">
+                        <div class="me-2 text-success"><i class="fas fa-check-circle"></i></div>
+                        <div>
+                            <div class="small fw-bold">${notification.data.title}</div>
+                            <div class="small text-muted text-wrap">${notification.data.message}</div>
+                            <div class="small text-muted" style="font-size: 0.75rem;">Vừa xong</div>
+                        </div>
+                    </a>
+                </li>
+                <li><hr class="dropdown-divider m-0"></li>
+            `;
+
+            // Chèn lên đầu danh sách
+            list.insertAdjacentHTML('afterbegin', itemHtml);
+        }
+
+        // Hàm phát âm thanh
+        function playNotificationSound() {
+            const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
+            audio.volume = 0.5;
+            audio.play().catch(e => console.log('Chưa tương tác, không phát tiếng'));
+        }
+
+        // Chạy mỗi 5 giây
+        setInterval(checkNewNotifications, 5000);
+    });
+</script>
+@endauth
 
 @yield('scripts')
 </body>

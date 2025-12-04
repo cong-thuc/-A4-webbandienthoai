@@ -18,4 +18,15 @@ class HomeController extends Controller
 
         return view('home', compact('categories', 'products'));
     }
+    public function checkNotifications()
+    {
+        $user = auth()->user();
+        // Lấy các thông báo chưa đọc
+        $notifications = $user->unreadNotifications;
+
+        // Đánh dấu là đã đọc ngay để không hiện lại lần sau
+        $user->unreadNotifications->markAsRead();
+
+        return response()->json($notifications);
+    }
 }

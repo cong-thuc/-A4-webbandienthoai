@@ -112,6 +112,9 @@ Route::middleware('auth')->group(function () {
 
     // ⭐ Route trang Tài khoản
     Route::get('/account', [AccountController::class, 'index'])->name('account.index');
+
+    // ✅ THÊM ROUTE KIỂM TRA THÔNG BÁO TẠI ĐÂY
+    Route::get('/notifications/check', [HomeController::class, 'checkNotifications'])->name('notifications.check');
 });
 
 // Google Auth

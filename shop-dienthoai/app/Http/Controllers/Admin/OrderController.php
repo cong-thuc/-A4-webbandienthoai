@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use Illuminate\Http\Request;
+use App\Notifications\OrderStatusUpdated;
 
 class OrderController extends Controller
 {
@@ -49,6 +50,13 @@ class OrderController extends Controller
         $order->update([
             'status' => $request->status
         ]);
+
+        // ✅ 2. THÊM ĐOẠN NÀY ĐỂ GỬI THÔNG BÁO
+        // Kiểm tra nếu đơn hàng này có người dùng (user_id không null)
+        if ($order->user) {
+            // Gửi thông báo đến người dùng đó
+            $order->user->notify(new OrderStatusUpdated($order));
+        }
 
         return redirect()->route('admin.orders.index')->with('success', 'Cập nhật trạng thái đơn hàng thành công');
     }
